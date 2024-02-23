@@ -50,7 +50,7 @@ use crate::deberta::DebertaForQuestionAnswering;
 use crate::distilbert::DistilBertForQuestionAnswering;
 use crate::fnet::FNetForQuestionAnswering;
 use crate::longformer::LongformerForQuestionAnswering;
-use crate::mobilebert::MobileBertForQuestionAnswering;
+use crate::mobilebert::{MobileBertConfigResources, MobileBertForQuestionAnswering, MobileBertModelResources, MobileBertVocabResources};
 use crate::pipelines::common::{
     cast_var_store, get_device, ConfigOption, ModelResource, ModelType, TokenizerOption,
 };
@@ -261,25 +261,25 @@ impl Default for QuestionAnsweringConfig {
     fn default() -> QuestionAnsweringConfig {
         QuestionAnsweringConfig {
             model_resource: ModelResource::Torch(Box::new(RemoteResource::from_pretrained(
-                DistilBertModelResources::DISTIL_BERT_SQUAD,
+                MobileBertModelResources::MOBILEBERT_UNCASED,
             ))),
             config_resource: Box::new(RemoteResource::from_pretrained(
-                DistilBertConfigResources::DISTIL_BERT_SQUAD,
+                MobileBertConfigResources::MOBILEBERT_UNCASED,
             )),
             vocab_resource: Box::new(RemoteResource::from_pretrained(
-                DistilBertVocabResources::DISTIL_BERT_SQUAD,
+                MobileBertVocabResources::MOBILEBERT_UNCASED,
             )),
             merges_resource: None,
             device: Device::cuda_if_available(),
             kind: None,
-            model_type: ModelType::DistilBert,
+            model_type: ModelType::MobileBert,
             lower_case: false,
             add_prefix_space: None,
             strip_accents: None,
             max_seq_length: 384,
             doc_stride: 128,
             max_query_length: 64,
-            max_answer_length: 15,
+            max_answer_length: 32,
         }
     }
 }
