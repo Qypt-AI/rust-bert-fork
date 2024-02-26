@@ -12,11 +12,35 @@
 
 extern crate anyhow;
 
-use rust_bert::pipelines::question_answering::{QaInput, QuestionAnsweringModel};
+use rust_bert::distilbert::{DistilBertConfigResources, DistilBertModelResources, DistilBertVocabResources};
+///use rust_bert::pipelines::question_answering::{QaInput, QuestionAnsweringModel};
+///use rust_bert::mobilebert::{MobileBertConfigResources, MobileBertModelResources, MobileBertVocabResources};
+use rust_bert::pipelines::common::{ModelResource, ModelType};
+use rust_bert::pipelines::question_answering::{QaInput, QuestionAnsweringConfig, QuestionAnsweringModel};
+use rust_bert::resources::RemoteResource;
+
 
 fn main() -> anyhow::Result<()> {
     //    Set-up Question Answering model
-    let qa_model = QuestionAnsweringModel::new(Default::default())?;
+    let config_resource = Box::new(RemoteResource::from_pretrained(
+        DistilBertConfigResources::DISTIL_BERT_SQUAD,
+    ));
+    let vocab_resource = Box::new(RemoteResource::from_pretrained(
+        DistilBertVocabResources::DISTIL_BERT_SQUAD,
+    ));
+    let model_resource = ModelResource::Torch(Box::new(RemoteResource::from_pretrained(
+        DistilBertModelResources::DISTIL_BERT_SQUAD,
+    )));
+
+    let qa_config = QuestionAnsweringConfig {
+        model_type: ModelType::DistilBert,
+        model_resource,
+        config_resource,
+        vocab_resource,
+        ..Default::default()
+    };
+
+    let qa_model = QuestionAnsweringModel::new(qa_config)?;
 
     //    Define input
     let question_1 = String::from("Where does Amy live ?");
